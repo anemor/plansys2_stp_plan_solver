@@ -40,7 +40,7 @@ public:
     const std::string & node_namespace = "");
 
 private:
-  std::string tfd_path_;
+  std::string stp_path_;
   std::string output_dir_parameter_name_;
   rclcpp_lifecycle::LifecycleNode::SharedPtr lc_node_;
 };
