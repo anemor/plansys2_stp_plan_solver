@@ -1,5 +1,5 @@
 # Simultaneous Temporal Planner (STP) solver for PlanSys2
-This package contains a plan solver that uses STP from the [Classical Planning for Temporal Planning (CP4TP)](https://github.com/aig-upf/temporal-planning) repo for solving PDDL plans. This is heavily inspired by the [TFD](https://github.com/PlanSys2/plansys2_tfd_plan_solver) plan solver. Uses STP-4 by default, can be manually changed in `/plansys2_stp_plan_solver`
+This package contains a plan solver that uses STP from the [Classical Planning for Temporal Planning (CP4TP)](https://github.com/aig-upf/temporal-planning) repo for solving PDDL plans. This is heavily inspired by the [TFD](https://github.com/PlanSys2/plansys2_tfd_plan_solver) plan solver. Uses STP-4 by default, can be manually changed in `src/plansys2_stp_plan_solver`
 
 ## Dependencies
 1. Follow the instructions in the [Temporal Planning](https://github.com/aig-upf/temporal-planning) repo to install the planner
