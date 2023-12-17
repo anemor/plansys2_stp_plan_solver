@@ -27,3 +27,4 @@
     <plansys2_planner plugin="${prefix}/local_planner_plugin.xml" />
   </export>
 </package>
+

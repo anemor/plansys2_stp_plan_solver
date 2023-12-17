@@ -29,20 +29,14 @@ class STPPlanSolver : public PlanSolverBase
 public:
   STPPlanSolver();
 
-  void configure(rclcpp_lifecycle::LifecycleNode::SharedPtr, const std::string &);
+  void configure(rclcpp_lifecycle::LifecycleNode::SharedPtr & node, const std::string & id);
 
   std::optional<plansys2_msgs::msg::Plan> getPlan(
     const std::string & domain, const std::string & problem,
     const std::string & node_namespace = "");
 
-  bool isDomainValid(
-    const std::string & domain,
-    const std::string & node_namespace = "");
-
 private:
   std::string stp_path_;
-  std::string output_dir_parameter_name_;
-  rclcpp_lifecycle::LifecycleNode::SharedPtr lc_node_;
 };
 
 }  // namespace plansys2
