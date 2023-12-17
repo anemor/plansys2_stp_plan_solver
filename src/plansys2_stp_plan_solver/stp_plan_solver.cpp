@@ -55,47 +55,72 @@ STPPlanSolver::getPlan(
   const std::string & domain, const std::string & problem,
   const std::string & node_namespace)
 {
+  mkdir(("/tmp/"), ACCESSPERMS);
+  std::string path = "/tmp";
   if (node_namespace != "") {
     //  This doesn't work as cxx flags must apper at end of link options, and I didn't
     //  find a way
     // std::experimental::filesystem::create_directories("/tmp/" + node_namespace);
     mkdir(("/tmp/" + node_namespace).c_str(), ACCESSPERMS);
+    path = "/tmp/" + node_namespace;
   }
 
   plansys2_msgs::msg::Plan ret;
-  std::ofstream domain_out("/tmp/" + node_namespace + "/domain.pddl");
+  std::ofstream domain_out(path + "/domain.pddl");
   domain_out << domain;
   domain_out.close();
 
-  std::ofstream problem_out("/tmp/" + node_namespace + "/problem.pddl");
+  std::ofstream problem_out(path + "/problem.pddl");
   problem_out << problem;
   problem_out.close();
 
-  system(
-    (stp_path_ + "/translate/translate.py " +
-    "/tmp/" + node_namespace + "/domain.pddl " +
-    "/tmp/" + node_namespace + "/problem.pddl").c_str()
-  );
+  // system(
+  //   (stp_path_ + "/translate/translate.py " +
+  //   "/tmp/" + node_namespace + "/domain.pddl " +
+  //   "/tmp/" + node_namespace + "/problem.pddl").c_str()
+  // );
 
-  system(
-    ("mv output.sas /tmp/" + node_namespace).c_str()
-  );
+  // system(
+  //   ("mv output.sas /tmp/" + node_namespace).c_str()
+  // );
 
-  system(
-    (stp_path_ + "/preprocess/preprocess < /tmp/output.sas").c_str()
-  );
+  // system(
+  //   (stp_path_ + "/preprocess/preprocess < /tmp/output.sas").c_str()
+  // );
 
-  system(
-    ("mv output /tmp/" + node_namespace).c_str()
-  );
+  // system(
+  //   ("mv output /tmp/" + node_namespace).c_str()
+  // );
 
-  system(
-    (stp_path_ + "/search/search y Y a T 10 t 5 e r O 1 C 1 p /tmp/" +
-    node_namespace + "/pddlplan < /tmp/" + node_namespace + "/output").c_str()
-  );
+  // system(
+  //   (stp_path_ + "/search/search y Y a T 10 t 5 e r O 1 C 1 p /tmp/" +
+  //   node_namespace + "/pddlplan < /tmp/" + node_namespace + "/output").c_str()
+  // );
 
+  // generate plan using plan.py and stp4
+  // system(
+  //   ("python2 " + stp_path_ + "/bin/plan.py stp-4" +
+  //   "/tmp/" + node_namespace + "/domain.pddl " +
+  //   "/tmp/" + node_namespace + "/problem.pddl").c_str()
+  // );
+  // system(("cd " + stp_path_ + "&& ls").c_str());
+  
+  // Run bin/plan.py from the temporal-planning reposotory, with the stp-4 solver.
+  // This can be changed manually here to whatever solver from temporal-planning.
+  // This will create output files in the current working directory, so need to cd to /tmp/ first.
+  const std::string solver = "stp-4";
+  system(
+    ("cd " + path + "&& ls && " + 
+    "python2.7 " + stp_path_ + "/bin/plan.py " + 
+    solver + " " + 
+    path + "/domain.pddl " + 
+    path + "/problem.pddl" +
+    "&& cd -" ).c_str()
+  );
+  
+  // Get the plan in the tmp_sas_plan.2 file. Also possible to use tmp_sas_plan.1
   std::string line;
-  std::ifstream plan_file("/tmp/" + node_namespace + "/pddlplan.1");
+  std::ifstream plan_file(stp_path_ + "/tmp_sas_plan.2");
   bool solution = false;
 
   if (plan_file.is_open()) {
@@ -118,10 +143,15 @@ STPPlanSolver::getPlan(
     }
     plan_file.close();
   }
-
-  system("mv /tmp/output /tmp/output.last");
-  system("mv /tmp/pddlplan.1 /tmp/pddlplan.1.last");
-  system("mv /tmp/output.sas /tmp/output.sas.last");
+  
+  // system("mv /tmp/output /tmp/output.last");
+  // system("mv /tmp/pddlplan.1 /tmp/pddlplan.1.last");
+  // system("mv /tmp/output.sas /tmp/output.sas.last");
+  system(
+    ("[ -f " + path + "/pddlplan ] && mv " +
+    path + "/pddlplan " +
+    path + "/pddlplan.last").c_str()
+  );
 
   if (ret.items.empty()) {
     return {};
