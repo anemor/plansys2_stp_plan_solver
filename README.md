@@ -1,0 +1,1 @@
+export STP_HOME=${HOME}/catkin_ws/src/temporal-planning
